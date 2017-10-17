@@ -4,8 +4,10 @@ require('../../css/common/global.css')
 require('../../css/common/grid.css')
 require('../../css/page/index.less')
 
+var config = require('../../../conf/conf.js');
+
 /* eslint-disable no-undef */
-$('.g-bd').append('<p class="text">这是由js生成的一句话。</p>')
+$('.g-bd').append('<p class="text">这是由js生成的一句话。'+config.test+'</p>');
 
 // 增加事件
 $('.btn').click(function () {

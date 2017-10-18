@@ -1,5 +1,6 @@
-var path = require('path')
-var webpack = require('webpack')
+var fs = require('fs');
+var path = require('path');
+var webpack = require('webpack');
 /*
  extract-text-webpack-plugin插件，
  有了它就可以将你的样式提取到单独的css文件里，
@@ -12,7 +13,10 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin')
  */
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 
-module.exports = {
+//定义文件夹的路径
+var HTML_ROOT_PATH = path.resolve(__dirname, "src/view");
+
+var config = {
     // 配置入口文件，有几个写几个
     entry: {
         index: './src/js/page/index.js',
@@ -66,52 +70,35 @@ module.exports = {
         }),
         new ExtractTextPlugin('css/[name].css'), // 单独使用link标签加载css并设置路径，相对于output配置中的publickPath
 
-        // HtmlWebpackPlugin，模板生成相关的配置，每个对于一个页面的配置，有几个写几个
-        new HtmlWebpackPlugin({ // 根据模板插入css/js等生成最终HTML
-            favicon: './src/img/favicon.ico', // favicon路径，通过webpack引入同时可以生成hash值
-            filename: './index.html', // 生成的html存放路径，相对于path
-            template: './src/view/index.html', // html模板路径
-            inject: 'body', // js插入的位置，true/'head'/'body'/false
-            hash: true, // 为静态资源生成hash值
-            chunks: ['vendors', 'index'], // 需要引入的chunk，不配置就会引入所有页面的资源
-            minify: { // 压缩HTML文件
-                removeComments: true, // 移除HTML中的注释
-                collapseWhitespace: false // 删除空白符与换行符
-            }
-        }),
-        new HtmlWebpackPlugin({ // 根据模板插入css/js等生成最终HTML
-            favicon: './src/img/favicon.ico', // favicon路径，通过webpack引入同时可以生成hash值
-            filename: './list.html', // 生成的html存放路径，相对于path
-            template: './src/view/list.html', // html模板路径
-            inject: true, // js插入的位置，true/'head'/'body'/false
-            hash: true, // 为静态资源生成hash值
-            chunks: ['vendors', 'list'], // 需要引入的chunk，不配置就会引入所有页面的资源
-            minify: { // 压缩HTML文件
-                removeComments: true, // 移除HTML中的注释
-                collapseWhitespace: false // 删除空白符与换行符
-            }
-        }),
-        new HtmlWebpackPlugin({ // 根据模板插入css/js等生成最终HTML
-            favicon: './src/img/favicon.ico', // favicon路径，通过webpack引入同时可以生成hash值
-            filename: './about.html', // 生成的html存放路径，相对于path
-            template: './src/view/about.html', // html模板路径
-            inject: true, // js插入的位置，true/'head'/'body'/false
-            hash: true, // 为静态资源生成hash值
-            chunks: ['vendors', 'about'], // 需要引入的chunk，不配置就会引入所有页面的资源
-            minify: { // 压缩HTML文件
-                removeComments: true, // 移除HTML中的注释
-                collapseWhitespace: false // 删除空白符与换行符
-            }
-        }),
-
         new webpack.HotModuleReplacementPlugin() // 热加载
     ],
     // 热更新 使用webpack-dev-server，提高开发效率
     devServer: {
-        contentBase: './',
+        contentBase: './dist',
         host: 'localhost',
         port: 9090,
         inline: true,
         hot: true
     }
-}
+};
+
+//HtmlWebpackPlugin，模板生成相关的配置，每个对于一个页面的配置
+var HtmlFiles   = fs.readdirSync(HTML_ROOT_PATH);
+HtmlFiles.forEach(function(item){
+    var currentpath = path.join(HTML_ROOT_PATH, item);
+    // HtmlWebpackPlugin，模板生成相关的配置
+    config.plugins.push(new HtmlWebpackPlugin({ // 根据模板插入css/js等生成最终HTML
+        favicon: './src/img/favicon.ico', // favicon路径，通过webpack引入同时可以生成hash值
+        filename: currentpath.replace("\\src\\view\\", "\\dist\\"), // 生成的html存放路径，相对于path
+        template: currentpath, // html模板路径
+        inject: 'body', // js插入的位置，true/'head'/'body'/false
+        hash: true, // 为静态资源生成hash值
+        chunks: ['vendors', item.match(/(.*?).html/)[1]], // 需要引入的chunk，不配置就会引入所有页面的资源
+        minify: { // 压缩HTML文件
+            removeComments: true, // 移除HTML中的注释
+            collapseWhitespace: false // 删除空白符与换行符
+        }
+    }));
+});
+
+module.exports = config;

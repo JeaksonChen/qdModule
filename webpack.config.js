@@ -1,15 +1,13 @@
 var fs = require('fs');
 var path = require('path');
 var webpack = require('webpack');
-/*
- extract-text-webpack-plugin插件，
- 有了它就可以将你的样式提取到单独的css文件里，
- 妈妈再也不用担心样式会被打包到js文件里了。
- */
+var NODE_ENV = process.env.NODE_ENV||'development';
+
+
+
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 /*
  html-webpack-plugin插件，重中之重，webpack中生成HTML的插件，
- 具体可以去这里查看https://www.npmjs.com/package/html-webpack-plugin
  */
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 
@@ -26,8 +24,8 @@ var config = {
 
     output: {
         path: path.join(__dirname, 'dist'), // 输出目录的配置，模板、样式、脚本、图片等资源的路径配置都相对于它
-        publicPath: './',       // 模板、样式、脚本、图片等资源对应的server上的路径
-        filename: 'js/[name].js',     // 每个页面对应的主js的生成配置
+        publicPath: './',       			// 模板、样式、脚本、图片等资源对应的server上的路径
+        filename: 'js/[name].js',     		// 每个页面对应的主js的生成配置
         chunkFilename: 'js/[id].chunk.js'   // chunk生成的配置
     },
     module: {
@@ -61,12 +59,17 @@ var config = {
         ]
     },
     plugins: [
-        new webpack.ProvidePlugin({ // 加载jq
+		new webpack.DefinePlugin({
+			'process.env': {
+				NODE_ENV: JSON.stringify(NODE_ENV) //定义编译环境 NODE_ENV: JSON.stringify('production') //定义生产环境
+			}
+		}),
+        new webpack.ProvidePlugin({ 			 // 加载jq
             $: 'jquery'
         }),
+		
         new ExtractTextPlugin('css/[name].css'), // 单独使用link标签加载css并设置路径，相对于output配置中的publickPath
 
-        new webpack.HotModuleReplacementPlugin() // 热加载
     ],
     // 热更新 使用webpack-dev-server，提高开发效率
     devServer: {
@@ -77,6 +80,21 @@ var config = {
         hot: true
     }
 };
+
+if (process.env.NODE_ENV == 'production') {
+    plugins.push(
+        new webpack.optimize.UglifyJsPlugin({
+			comments: false,
+            compress:{
+                warnings: false,
+                drop_debugger: true,
+                drop_console: true
+            }
+        })
+    );
+} else {
+    new webpack.HotModuleReplacementPlugin() // 热加载
+}
 
 //HtmlWebpackPlugin 模板生成相关的配置，每个对于一个页面的配置
 var HtmlFiles   = fs.readdirSync(HTML_ROOT_PATH);
@@ -94,7 +112,9 @@ HtmlFiles.forEach(function(item){
             chunks: ['vendors', fileName], // 需要引入的chunk，不配置就会引入所有页面的资源
             minify: { // 压缩HTML文件
                 removeComments: true, // 移除HTML中的注释
-                collapseWhitespace: false // 删除空白符与换行符
+                collapseWhitespace: false, // 删除空白符与换行符
+				//minifyJS:true,
+				//minifyCSS:true,
             }
         }));
         config.entry[fileName] = JS_ROOT_PATH +"/"+ fileName + ".js";  //配置入口

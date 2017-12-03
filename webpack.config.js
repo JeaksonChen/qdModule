@@ -2,7 +2,7 @@ var fs = require('fs');
 var path = require('path');
 var webpack = require('webpack');
 var NODE_ENV = process.env.NODE_ENV||'development';
-
+var curVersion = process.env.version||'1.0.0';
 
 
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
@@ -61,8 +61,9 @@ var config = {
     plugins: [
 		new webpack.DefinePlugin({
 			'process.env': {
-				NODE_ENV: JSON.stringify(NODE_ENV) //定义编译环境 NODE_ENV: JSON.stringify('production') //定义生产环境
-			}
+				NODE_ENV: JSON.stringify(NODE_ENV)
+			},
+			'curVersion': JSON.stringify(curVersion)
 		}),
         new webpack.ProvidePlugin({ 			 // 加载jq
             $: 'jquery'
@@ -71,18 +72,10 @@ var config = {
         new ExtractTextPlugin('css/[name].css'), // 单独使用link标签加载css并设置路径，相对于output配置中的publickPath
 
     ],
-    // 热更新 使用webpack-dev-server，提高开发效率
-    devServer: {
-        contentBase: './dist',
-        host: 'localhost',
-        port: 9090,
-        inline: true,
-        hot: true
-    }
 };
 
-if (process.env.NODE_ENV == 'production') {
-    plugins.push(
+if (process.env.NODE_ENV == 'production') {    //正式环境
+    config.plugins.push(
         new webpack.optimize.UglifyJsPlugin({
 			comments: false,
             compress:{
@@ -92,8 +85,18 @@ if (process.env.NODE_ENV == 'production') {
             }
         })
     );
-} else {
-    new webpack.HotModuleReplacementPlugin() // 热加载
+} else {    //开发环境
+	config.plugins.push(
+        new webpack.HotModuleReplacementPlugin() // 热加载
+    );
+	// 热更新 使用webpack-dev-server，提高开发效率
+	config.devServer = {
+		contentBase: './dist',
+		host: 'localhost',
+		port: 9090,
+		inline: true,
+		hot: true
+	}
 }
 
 //HtmlWebpackPlugin 模板生成相关的配置，每个对于一个页面的配置

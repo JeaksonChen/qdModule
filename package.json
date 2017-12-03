@@ -5,7 +5,7 @@
   "scripts": {
     "server": "webpack-dev-server",
     "build" : "webpack",
-	"pro"   : "set NODE_ENV=production && webpack"
+	"pro"   : "set NODE_ENV=production&&webpack"
   },
   "author": "cyson",
   "license": "ISC",

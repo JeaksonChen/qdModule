@@ -4,7 +4,8 @@ require('../../css/common/global.css')
 require('../../css/common/grid.css')
 require('../../css/page/index.less')
 
-var common = require('../common/common.js');
+var pay = require('../module/pay.js');
+var common = pay.common;
 
 var version = common.getUrlParam("version");
 var protocol = common.checkedProtocol(window.location.href);
@@ -19,8 +20,8 @@ $('.g-bd').append('<p class="text">这是由js生成的一句话。-----'+common
 
 // 增加事件
 $('.btn').click(function () {
-    require.ensure(['../common/dialog/index.js'], function (require) {
-        var Dialog = require('../common/dialog/index.js')
+    require.ensure(['../module/dialog/index.js'], function (require) {
+        var Dialog = require('../module/dialog/index.js')
         new Dialog()
     })
 })

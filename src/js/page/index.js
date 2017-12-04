@@ -4,7 +4,8 @@ require('../../css/common/global.css')
 require('../../css/common/grid.css')
 require('../../css/page/index.less')
 
-var pay = require('../module/pay.js');
+var Pay = require('../module/pay.js');
+var pay = new Pay();
 var common = pay.common;
 
 var version = common.getUrlParam("version");

@@ -11,8 +11,7 @@ function Pay() {
 
 
 Pay.prototype = {
-	constructor : Pay,
-	common : common,
+	constructor : Pay
 }
 
 module.exports = Pay;

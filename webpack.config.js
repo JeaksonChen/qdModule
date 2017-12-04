@@ -91,7 +91,7 @@ if (process.env.NODE_ENV == 'production') {    //正式环境
     );
 	// 热更新 使用webpack-dev-server，提高开发效率
 	config.devServer = {
-		contentBase: './dist',
+		contentBase: './dist/',
 		host: 'localhost',
 		port: 9090,
 		inline: true,

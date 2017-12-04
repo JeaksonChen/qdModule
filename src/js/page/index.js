@@ -4,20 +4,11 @@ require('../../css/common/global.css')
 require('../../css/common/grid.css')
 require('../../css/page/index.less')
 
+var Check = require('../module/check.js');
 var Pay = require('../module/pay.js');
-var pay = new Pay();
-var common = pay.common;
+var check = new Check();
+var common = check.common;
 
-var version = common.getUrlParam("version");
-var protocol = common.checkedProtocol(window.location.href);
-console.log(version);
-console.log(curVersion);
-console.log(protocol);
-console.log(common.comparVersion(">","2.8.3","2.8.2"));
-
-
-/* eslint-disable no-undef */
-$('.g-bd').append('<p class="text">这是由js生成的一句话。-----'+common.DateTime+ '</p>');
 
 // 增加事件
 $('.btn').click(function () {

@@ -24,12 +24,12 @@ var config = {
 
     output: {
         path: path.join(__dirname, 'dist'), // 输出目录的配置，模板、样式、脚本、图片等资源的路径配置都相对于它
-        publicPath: './',       			// 模板、样式、脚本、图片等资源对应的server上的路径
+        publicPath: '',       			// 模板、样式、脚本、图片等资源对应的server上的路径
         filename: 'js/[name].js',     		// 每个页面对应的主js的生成配置
-        chunkFilename: 'js/[id].chunk.js'   // chunk生成的配置
+        chunkFilename: 'js/[id].chunk.js',   // chunk生成的配置
     },
     module: {
-        // 加载器，关于各个加载器的参数配置，可自行搜索之。
+        // 加载器，关于各个加载器的参数配置，可自行搜索之。        
         loaders: [
             {
                 test: /\.css$/,
@@ -49,14 +49,30 @@ var config = {
             }, {
                 // 文件加载器，处理文件静态资源
                 test: /\.(woff|woff2|ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-                loader: 'file-loader?name=./fonts/[name].[ext]'
-            }, {
+                loader: 'file-loader?name=/fonts/[name].[ext]'
+            }, 
+            {
                 // 图片加载器，雷同file-loader，更适合图片，可以将较小的图片转成base64，减少http请求
                 // 如下配置，将小于8192byte的图片转成base64码
                 test: /\.(png|jpg|gif)$/,
-                loader: 'url-loader?limit=8192&name=./img/[hash].[ext]'
+                loader: 'url-loader?limit=8192&name=/img/[hash].[ext]'
             }
         ]
+    },
+    resolve: {
+        //查找module的话从这里开始查找
+        // 现在可以写 require('file') 代替 require('file.coffee')
+        //自动扩展文件后缀名，意味着我们require模块可以省略不写后缀名
+        extensions: ['','.jsx', '.js', '.json', '.coffee'],
+        alias: {
+            md5: path.join(__dirname, "./src/js/module/lib/jquery.md5.js"),
+            swiper: path.join(__dirname, "./src/js/module/lib/swiper.jquery.min.js"),
+            qqShare: path.join(__dirname, "./src/js/module/lib/qqShare.js"),
+            wxShare: path.join(__dirname, "./src/js/module/wxShare.js"),
+            check: path.join(__dirname, "./src/js/module/check.js"),
+            pay: path.join(__dirname, "./src/js/module/pay.js"),
+            conf: path.join(__dirname, "./conf/conf.js")
+        }
     },
     plugins: [
 		new webpack.DefinePlugin({
@@ -66,12 +82,15 @@ var config = {
 			'curVersion': JSON.stringify(curVersion)
 		}),
         new webpack.ProvidePlugin({ 			 // 加载jq
-            $: 'jquery'
+            $:'jquery',
+            jQuery:'jquery',
+            'window.jQuery':'jquery',
+            config:'conf'
         }),
 		
         new ExtractTextPlugin('css/[name].css'), // 单独使用link标签加载css并设置路径，相对于output配置中的publickPath
 
-    ],
+    ]
 };
 
 if (process.env.NODE_ENV == 'production') {    //正式环境

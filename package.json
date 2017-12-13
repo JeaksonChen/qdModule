@@ -4,8 +4,8 @@
   "description": "front demo",
   "scripts": {
     "server": "webpack-dev-server",
-    "build" : "webpack",
-	"pro"   : "set NODE_ENV=production&&webpack"
+    "build": "webpack",
+    "pro": "set NODE_ENV=production&&webpack"
   },
   "author": "cyson",
   "license": "ISC",
@@ -22,5 +22,8 @@
     "url-loader": "^0.5.7",
     "webpack": "^1.12.13",
     "webpack-dev-server": "^1.14.1"
+  },
+  "dependencies": {
+    "weixin-js-sdk": "^1.2.0"
   }
 }

@@ -5,8 +5,6 @@ require('../../css/common/global.css')
 require('../../css/common/grid.css')
 require('../../css/page/invitation.less')
 //引入js
-require('weixin-js-sdk');
-var qqShare = require('qqShare');
 var Swiper = require('swiper');
 var md5 = require('md5');
 var wxShare = require('wxShare');
@@ -26,7 +24,7 @@ var swiper = new Swiper('.swiper-container', {
 });
 var share = new wxShare();
 share.start()
-
+console.log('==========哈哈哈',wx)
 var DEVICE  = common.isiOS ? "iOS" : "android";
 var APPBUILD = 1100;
 var APIVER = 1102;
@@ -53,8 +51,9 @@ function event(){
 	$('.change').on('click',function(){
 		config.productId = Math.ceil(Math.random()*100);
 		pay.refresh({product_id:config.productId});
+		console.log(config.productId)
 	})
-	
+
 	//支付
 	var token = "15467888";
 	var userId = "1980";

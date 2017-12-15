@@ -9,7 +9,9 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin')
 /*
  html-webpack-plugin插件，重中之重，webpack中生成HTML的插件，
  */
-var HtmlWebpackPlugin = require('html-webpack-plugin')
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+
+var htmlWebpackPluginExtend = require('html-webpack-plugin-extend');  //扩展插件，为html文件引入外链
 
 //定义文件夹的路径
 var HTML_ROOT_PATH = path.resolve(__dirname, "src/view");   //模板文件路径
@@ -89,6 +91,9 @@ var config = {
         }),
 		
         new ExtractTextPlugin('css/[name].css'), // 单独使用link标签加载css并设置路径，相对于output配置中的publickPath
+        new htmlWebpackPluginExtend({
+            paths: ["//qzonestyle.gtimg.cn/qzone/qzact/common/share/share.js","//res.wx.qq.com/open/js/jweixin-1.0.0.js"]
+        })
 
     ]
 };
@@ -131,7 +136,7 @@ HtmlFiles.forEach(function(item){
             template: currentPath, // html模板路径
             inject: 'body', // js插入的位置，true/'head'/'body'/false
             hash: true, // 为静态资源生成hash值
-            chunks: ['vendors', fileName], // 需要引入的chunk，不配置就会引入所有页面的资源
+            chunks: ['vendors', fileName], // 需要引入的chunk，不配置就会引入所有页面的资源 
             minify: { // 压缩HTML文件
                 removeComments: true, // 移除HTML中的注释
                 collapseWhitespace: false, // 删除空白符与换行符
